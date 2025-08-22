@@ -20,7 +20,7 @@ export const authOptions = {
         const db = client.db("car-selling"); 
         const collection = db.collection("users"); 
 
-        // MongoDB থেকে ইউজার খুঁজে বের করা
+        
         const user = await collection.findOne({ email: credentials.email });
         if (!user) return null;
 
