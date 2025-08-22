@@ -1,3 +1,6 @@
+
+"use server";
+
 import dbConnect from "@/lib/dbConnect";
 import CarCard from "@/components/CarCard";
 
