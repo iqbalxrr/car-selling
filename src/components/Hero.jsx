@@ -32,7 +32,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <div className="h-screen bg-[url('/herobg.jpg')] bg-cover bg-center relative overflow-hidden flex items-center justify-center">
+    <div className="h-[85vh] bg-[url('/herobg.jpg')] bg-cover bg-center relative overflow-hidden flex items-center justify-center">
       <AnimatePresence mode="wait">
         <motion.div
           key={currentSlide}

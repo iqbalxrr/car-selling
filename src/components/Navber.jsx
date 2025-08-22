@@ -4,18 +4,22 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
-  
+  const pathname = usePathname();
+
   const links = [
-  { name: "Home", path: "/" },
-  { name: "About", path: "/about" },
-  { name: "Services", path: "/services" },
-  { name: "Contact", path: "/contact" },
-  session?.user ? {name: "Dashboard", path: "/dashboard"} : {name: "Login", path: "/login"},
-];
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
+    { name: "Products", path: "/products" },
+    { name: "Contact", path: "/contact" },
+    session?.user
+      ? { name: "Dashboard", path: "/dashboard" }
+      : { name: "Login", path: "/login" },
+  ];
 
   return (
     <div className="w-full fixed top-0 left-0 bg-[#0a1a3c]/80 backdrop-blur-md z-50">
@@ -26,16 +30,24 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <ul className="hidden md:flex space-x-8 text-white">
-            {links.map((link, index) => (
-              <li
-                key={index}
-                className="hover:text-red-500 cursor-pointer transition"
-              >
-                <Link href={link.path}>
-                  {link.name}
-                </Link>
-              </li>
-            ))}
+            {links.map((link, index) => {
+              const isActive = pathname === link.path;
+
+              return (
+                <li key={index}>
+                  <Link
+                    href={link.path}
+                    className={`transition px-2 py-1 rounded-md ${
+                      isActive
+                        ? "bg-red-500 text-white shadow-md"
+                        : "hover:text-red-400"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           {/* Mobile Menu Button */}
@@ -58,16 +70,24 @@ export default function Navbar() {
               exit={{ height: 0, opacity: 0 }}
               className="md:hidden flex flex-col bg-[#0a1a3c] text-white px-4 py-5 space-y-4 rounded-b-md"
             >
-              {links.map((link, index) => (
-                <li
-                  key={index}
-                  className="hover:text-red-500 cursor-pointer transition"
-                >
-                  <Link href={link.path}>
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
+              {links.map((link, index) => {
+                const isActive = pathname.startsWith(link.path);
+
+                return (
+                  <li key={index}>
+                    <Link
+                      href={link.path}
+                      className={`transition px-2 py-1 rounded-md block ${
+                        isActive
+                          ? "bg-red-500 text-white shadow-md"
+                          : "hover:text-red-400"
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                );
+              })}
             </motion.ul>
           )}
         </AnimatePresence>

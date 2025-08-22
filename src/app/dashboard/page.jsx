@@ -1,42 +1,82 @@
 "use client";
 
+import Spinner from "@/components/Spinner";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function DashboardHome() {
   const { data: session, status } = useSession();
 
-  if (status === "loading") return <p>Loading...</p>;
-  if (!session) return null; // already handled in layout
+  if (status === "loading")
+    return <Spinner />;
+      
+  if (!session) return null;
+
+  const salesData = [
+    { month: "Jan", sales: 400, profit: 240 },
+    { month: "Feb", sales: 300, profit: 139 },
+    { month: "Mar", sales: 500, profit: 280 },
+    { month: "Apr", sales: 450, profit: 200 },
+    { month: "May", sales: 600, profit: 300 },
+    { month: "Jun", sales: 700, profit: 400 },
+  ];
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Welcome, {session.user.email}</h1>
-      <p className="mb-8 text-gray-700">
-        Here's a quick overview of your dashboard. Manage products, view stats, and more.
-      </p>
+    <div className="sm:p-6 space-y-6">
+      {/* Welcome Gradient Card */}
+      <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white p-6 rounded-xl shadow-lg">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+          Welcome, {session.user?.name || session.user?.email}
+        </h1>
+        <p className="text-sm sm:text-base">
+          🚀 Glad to have you back! Here’s your latest dashboard insights at a
+          glance.
+        </p>
+      </div>
 
-      {/* Quick Action Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link
-          href="/dashboard/add-product"
-          className="bg-blue-600 text-white p-6 rounded shadow hover:bg-blue-700"
-        >
-          <h2 className="text-xl font-bold mb-2">Add Product</h2>
-          <p>Create a new product and add it to your store.</p>
-        </Link>
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Sales Bar Chart */}
+        <div className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
+          <h2 className="text-lg font-semibold mb-3">📊 Monthly Sales</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={salesData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="sales" fill="#2563eb" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
-        <Link
-          href="/dashboard/products"
-          className="bg-green-600 text-white p-6 rounded shadow hover:bg-green-700"
-        >
-          <h2 className="text-xl font-bold mb-2">View Products</h2>
-          <p>See all your listed products and manage them.</p>
-        </Link>
-
-        <div className="bg-yellow-500 text-white p-6 rounded shadow">
-          <h2 className="text-xl font-bold mb-2">Stats</h2>
-          <p>Check recent activity, sales stats, and insights.</p>
+        {/* Profit Line Chart */}
+        <div className="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
+          <h2 className="text-lg font-semibold mb-3">📈 Profit Trend</h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={salesData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="profit"
+                stroke="#16a34a"
+                strokeWidth={3}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

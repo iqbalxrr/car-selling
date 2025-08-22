@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navber";
 import NextAuthProvider from "@/Providers/nextAuthProvider";
 import HideOnDashboard from "@/components/HideOnDashboard";
+import Footer from "@/components/Footer";
 
 
 
@@ -35,6 +36,9 @@ export default function RootLayout({ children }) {
         <Navbar />
       </HideOnDashboard>
         {children}
+        <HideOnDashboard>
+        <Footer />
+      </HideOnDashboard>
       </body>
       </NextAuthProvider>
     </html>
