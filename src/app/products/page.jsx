@@ -1,16 +1,33 @@
+"use client";
 
-"use server";
-
-import dbConnect from "@/lib/dbConnect";
+import { useEffect, useState } from "react";
 import CarCard from "@/components/CarCard";
+import Spinner from "@/components/Spinner";
 
-export default async function ProductsPage() {
-  const client = await dbConnect();
-  const db = client.db("car-selling"); 
-  const collection = db.collection("products");
+export default function ProductsPage() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // All products fetch
-  const products = await collection.find({}).toArray();
+  // Client-side fetch
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/products", { cache: "no-store" });
+        const data = await res.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="py-30 px-4 container mx-auto">
@@ -18,11 +35,15 @@ export default async function ProductsPage() {
         Buy Car
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <CarCard key={product._id.toString()} product={product} />
-        ))}
-      </div>
+      {products.length === 0 ? (
+        <p className="text-center text-gray-500">No cars available.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <CarCard key={product._id} product={product} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
